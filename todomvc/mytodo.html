@@ -40,6 +40,12 @@
             </li>
         </ul>
         </section>
+        <footer class="footer">
+            <span class="todo-count">
+                <strong v-text="remaining"></strong> {{remaining | pluralize 'item'}} left
+            </span>
+        </footer>
+
     </section>
     <script type="text/javascript" src="../vue.js"></script>
     <script type="text/javascript" src="js/mytodo.js"></script>

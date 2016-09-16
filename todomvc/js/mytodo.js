@@ -27,6 +27,9 @@ var app = new Vue({
     computed: {
         filteredTodos: function() {
             return filters[this.visibility](this.todos);
+        }, 
+        remaining: function (){
+            return filters.active(this.todos).length;
         }
     },
 
