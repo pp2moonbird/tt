@@ -54,6 +54,10 @@ var app = new Vue({
             if(!todo.title){
                 this.removeTodo(todo);
             }
+        },
+
+        removeTodo: function (todo){
+            this.todos.$remove(todo);
         }
 
 
