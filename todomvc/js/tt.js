@@ -13,7 +13,7 @@ var app = new Vue({
                 return;
             }
             this.items.push(value);
-            this.newTodo='';
+            this.newText='';
         }
     }
 });
