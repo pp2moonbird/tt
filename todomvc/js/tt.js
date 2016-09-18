@@ -12,8 +12,16 @@ var app = new Vue({
             if(!value){
                 return;
             }
-            this.items.push(value);
-            this.newText='';
+            var pattern1 = /(\d{3,4}|now)-(\d{3,4}|now)/
+            if(pattern1.test(value)){
+                var result = pattern1.exec(value)
+                this.items.push({rawText:value, patternFound: result[0]});
+            }
+            else{
+                this.items.push({rawText:value, patternFound: 'not found'});
+                
+            }
+            this.newText=''
         }
     }
 });
