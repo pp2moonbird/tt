@@ -17,22 +17,19 @@ var app = new Vue({
                 return;
             }
 
-
             if(pattern1.test(value)){
-                var result = pattern1.exec(value)
-                this.items.push({rawText:value, patternFound: convertToDate(result[0])});
+                var result = parsePattern1(value);
+                this.items.push(result);
             }
             else if(pattern2.test(value)){
-                var result = pattern2.exec(value)
-                this.items.push({rawText:value, patternFound: result[0]});
+
             }
             else if(pattern3.test(value)){
-                var result = pattern3.exec(value)
-                this.items.push({rawText:value, patternFound: result[0]});
+
             }
+            //invalid string
             else{
-                this.items.push({rawText:value, patternFound: 'not found'});
-                
+
             }
             this.newText=''
         }
@@ -40,13 +37,27 @@ var app = new Vue({
 });
 
 
-function parsePattern1(rawText){
-    var result = pattern1.exec(rawText);
-    startStr = result[1].trim()
-    endStr = result[2].trim()
+function item(rawText, itemText, startTime, endTime, startTimeStr, endTimeStr, completed, valid){
+    this.rawText = rawText;
+    this.itemText = itemText;
+    this.startTime = startTime;
+    this.endTime = endTime;
+    this.startTimeStr = formatTime(startTime);
+    this.endTimeStr = formatTime(endTime);
+    this.completed = completed;
+    this.valid = valid;
 
+}
+
+function parsePattern1(rawText){
+    var matchPattern = pattern1.exec(rawText);
+    startStr = matchPattern[1].trim()
+    endStr = matchPattern[2].trim()
+
+
+    currentTimeStamp = new Date();
     if(startStr.toLowerCase()==='now'){
-        startTime = new Date()
+        startTime = currentTimeStamp;
     }
     else{
         if (startStr.length == 3){
@@ -57,10 +68,58 @@ function parsePattern1(rawText){
             h = startStr[0] + startStr[1]
             m = startStr[2] + startStr[3]
         }
+        hour = Number(h);
+        minute = Number(m);
+
+        if(hour>24 || minute > 60){
+            result = new item(rawText, 'invalid text, number format error', null, null, null, null, false, false);
+            return result;
+        }
+
+        currentHour = currentTimeStamp.getHours();
+        if (currentHour>12 && hour<12){
+            hour = hour + 12;
+        }
+        
+        startTime = currentTimeStamp.setHours(hour);
+        startTime = currentTimeStamp.setHours(minute);
+    }
+
+    if(endStr.toLowerCase()==='now'){
+        endTime = currentTimeStamp;
+    }
+    else{
+        if (endStr.length == 3){
+            h = endStr[0]
+            m = endStr[1] + endStr[2]
+        }
+        else{
+            h = endStr[0] + endStr[1]
+            m = endStr[2] + endStr[3]
+        }
+        hour = Number(h);
+        minute = Number(m);
+
+        if(hour>24 || minute > 60){
+            result = new item(rawText, 'invalid text, number format error', null, null, null, null, false, false);
+            return result;
+        }
+
+        currentHour = currentTimeStamp.getHours();
+        if (currentHour>12 && hour<12){
+            hour = hour + 12;
+        }
+        
+        endTime = currentTimeStamp.setHours(hour);
+        endTime = currentTimeStamp.setHours(minute);
     }
 
 
+    result = new item(rawText, rawText, startTime, endTime, formatTime(startTime), formatTime(endTime), true, true);
+    return result;
+}
 
-
-    return rawText + '!'
+function formatTime(timestamp){
+    result = timestamp.getHours() + ":" + timestamp.getMinutes();
+    return result;
 }
