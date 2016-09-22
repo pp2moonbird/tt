@@ -29,7 +29,8 @@ var app = new Vue({
             }
             //invalid string
             else{
-
+                result = new item(value, 'no match', null, null, null, null, false, false);
+                //return result;
             }
             this.newText=''
         }
@@ -54,69 +55,47 @@ function parsePattern1(rawText){
     startStr = matchPattern[1].trim()
     endStr = matchPattern[2].trim()
 
-
-    currentTimeStamp = new Date();
-    if(startStr.toLowerCase()==='now'){
-        startTime = currentTimeStamp;
-    }
-    else{
-        if (startStr.length == 3){
-            h = startStr[0]
-            m = startStr[1] + startStr[2]
-        }
-        else{
-            h = startStr[0] + startStr[1]
-            m = startStr[2] + startStr[3]
-        }
-        hour = Number(h);
-        minute = Number(m);
-
-        if(hour>24 || minute > 60){
-            result = new item(rawText, 'invalid text, number format error', null, null, null, null, false, false);
-            return result;
-        }
-
-        currentHour = currentTimeStamp.getHours();
-        if (currentHour>12 && hour<12){
-            hour = hour + 12;
-        }
-        
-        startTime = currentTimeStamp.setHours(hour);
-        startTime = currentTimeStamp.setHours(minute);
-    }
-
-    if(endStr.toLowerCase()==='now'){
-        endTime = currentTimeStamp;
-    }
-    else{
-        if (endStr.length == 3){
-            h = endStr[0]
-            m = endStr[1] + endStr[2]
-        }
-        else{
-            h = endStr[0] + endStr[1]
-            m = endStr[2] + endStr[3]
-        }
-        hour = Number(h);
-        minute = Number(m);
-
-        if(hour>24 || minute > 60){
-            result = new item(rawText, 'invalid text, number format error', null, null, null, null, false, false);
-            return result;
-        }
-
-        currentHour = currentTimeStamp.getHours();
-        if (currentHour>12 && hour<12){
-            hour = hour + 12;
-        }
-        
-        endTime = currentTimeStamp.setHours(hour);
-        endTime = currentTimeStamp.setHours(minute);
-    }
-
+    startTime = parseTime(startStr);
+    endTime = parseTime(endStr);
 
     result = new item(rawText, rawText, startTime, endTime, formatTime(startTime), formatTime(endTime), true, true);
     return result;
+}
+
+
+function parseTime(timeStr){
+    currentTimeStamp = new Date();
+    resultTime = null;
+    if(timeStr.toLowerCase()==='now'){
+        resultTime = currentTimeStamp;
+    }
+    else{
+        if (timeStr.length == 3){
+            h = timeStr[0]
+            m = timeStr[1] + timeStr[2]
+        }
+        else{
+            h = timeStr[0] + timeStr[1]
+            m = timeStr[2] + timeStr[3]
+        }
+        hour = Number(h);
+        minute = Number(m);
+
+        if(hour>24 || minute > 60){
+            result = new item(rawText, 'invalid text, number format error', null, null, null, null, false, false);
+            return result;
+        }
+
+        currentHour = currentTimeStamp.getHours();
+        if (currentHour>12 && hour<12){
+            hour = hour + 12;
+        }
+        
+        resultTime = currentTimeStamp.setHours(hour);
+        resultTime = currentTimeStamp.setHours(minute);
+    }
+    resultTime = new Date(resultTime);
+    return resultTime;
 }
 
 function formatTime(timestamp){
