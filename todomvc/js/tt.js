@@ -108,6 +108,9 @@ function parseTime(timeStr){
 }
 
 function formatTime(timestamp){
-    var result = timestamp.getHours() + ":" + timestamp.getMinutes();
+    hour = timestamp.getHours();
+    minute = timestamp.getMinutes();
+    
+    var result = timestamp.getHours() + ((minute < 10) ? ":0" : ":") + minute;
     return result;
 }
