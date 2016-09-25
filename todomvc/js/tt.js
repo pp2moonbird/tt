@@ -2,12 +2,33 @@ var pattern1 = /(\d{3,4}|now)\s*-\s*(\d{3,4}|now)/
 var pattern2 = /-\s*now/
 var pattern3 = /now\s*-/
 
+var STORAGE_KEY = 'tt';
+
+todoStorage = {
+    fetch: function () {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    },
+    save: function (todos) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+    }
+};
+
+
 var app = new Vue({
     el: '#ttapp',
 
     data: {
         newText: '',
-        items: []
+        items: todoStorage.fetch()
+    },
+
+    watch:{
+        items:{
+            handler: function(items){
+                todoStorage.save(items);
+            },
+            deep: true
+        }
     },
 
     methods: {
