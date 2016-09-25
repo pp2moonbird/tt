@@ -52,15 +52,16 @@ function item(rawText, itemText, startTime, endTime, startTimeStr, endTimeStr, c
 
 function parsePattern1(rawText){
     var matchPattern = pattern1.exec(rawText);
-    startStr = matchPattern[1].trim()
-    endStr = matchPattern[2].trim()
+    var startStr = matchPattern[1].trim()
+    var endStr = matchPattern[2].trim()
 
     console.log('---start parse start time');
     startTime = parseTime(startStr);
     console.log('---start parse end time');
     endTime = parseTime(endStr);
 
-    result = new item(rawText, rawText, startTime, endTime, formatTime(startTime), formatTime(endTime), true, true);
+    var itemText = rawText.replace(pattern1, '').trim();
+    result = new item(rawText, itemText, startTime, endTime, formatTime(startTime), formatTime(endTime), true, true);
     return result;
 }
 
