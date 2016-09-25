@@ -55,7 +55,9 @@ function parsePattern1(rawText){
     startStr = matchPattern[1].trim()
     endStr = matchPattern[2].trim()
 
+    console.log('---start parse start time');
     startTime = parseTime(startStr);
+    console.log('---start parse end time');
     endTime = parseTime(endStr);
 
     result = new item(rawText, rawText, startTime, endTime, formatTime(startTime), formatTime(endTime), true, true);
@@ -64,8 +66,10 @@ function parsePattern1(rawText){
 
 
 function parseTime(timeStr){
-    currentTimeStamp = new Date();
-    resultTime = null;
+    var currentTimeStamp = new Date();
+    var resultTime = null;
+    var h=null;
+    var m=null;
     if(timeStr.toLowerCase()==='now'){
         resultTime = currentTimeStamp;
     }
@@ -78,27 +82,32 @@ function parseTime(timeStr){
             h = timeStr[0] + timeStr[1]
             m = timeStr[2] + timeStr[3]
         }
-        hour = Number(h);
-        minute = Number(m);
 
+        var hour = Number(h);
+        var minute = Number(m);
+        console.log('h' + hour);
+        console.log('m' + minute)
         if(hour>24 || minute > 60){
             result = new item(rawText, 'invalid text, number format error', null, null, null, null, false, false);
             return result;
         }
 
-        currentHour = currentTimeStamp.getHours();
+        var currentHour = currentTimeStamp.getHours();
+        console.log('current hour is' + currentHour);
         if (currentHour>12 && hour<12){
             hour = hour + 12;
         }
         
+        console.log('currentTimeStamp: ' + currentTimeStamp)
         resultTime = currentTimeStamp.setHours(hour);
-        resultTime = currentTimeStamp.setHours(minute);
+        resultTime = currentTimeStamp.setMinutes(minute);
+        console.log('currentTimeStamp modified: ' + currentTimeStamp)
     }
     resultTime = new Date(resultTime);
     return resultTime;
 }
 
 function formatTime(timestamp){
-    result = timestamp.getHours() + ":" + timestamp.getMinutes();
+    var result = timestamp.getHours() + ":" + timestamp.getMinutes();
     return result;
 }
