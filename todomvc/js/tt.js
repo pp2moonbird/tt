@@ -1,6 +1,6 @@
 var pattern1 = /(\d{3,4}|now)\s*-\s*(\d{3,4}|now)/
-var pattern2 = /-\s*now/
-var pattern3 = /now\s*-/
+var pattern2 = /-\s*(now)/
+var pattern3 = /(now)\s*-/
 
 var STORAGE_KEY = 'tt';
 
@@ -43,7 +43,8 @@ var app = new Vue({
                 this.items.push(result);
             }
             else if(pattern2.test(value)){
-
+                var result = parsePattern2(value, this.items);
+                this.items.push(result);
             }
             else if(pattern3.test(value)){
 
@@ -77,25 +78,57 @@ function parsePattern1(rawText){
     var endStr = matchPattern[2].trim()
 
     console.log('---start parse start time');
-    startTime = parseTime(startStr);
+    var startTime = parseTime(startStr);
     console.log('---start parse end time');
-    endTime = parseTime(endStr);
+    var endTime = parseTime(endStr);
 
     var itemText = rawText.replace(pattern1, '').trim();
     result = new item(rawText, itemText, startTime, endTime, formatTime(startTime), formatTime(endTime), true, true);
     return result;
 }
 
+function parsePattern2(rawText, items){
+    console.log('pattern2');
+    var matchPattern = pattern2.exec(rawText);
+    var startTime = new Date();
+    //calculate the latest time from existing items
+    if (items.length == 0){
+        startTime = new Date();
+    }
+    else{
+        maxTime = items[0].endTime;
+
+        for(i=0;i<items.length;i++){
+            if(items[i].endTime > maxTime){
+                maxTime = items[i].endTime;
+                console.log('--maxTime' + maxTime);
+            }
+        }
+        startTime = new Date(maxTime);//TODO
+    }
+
+    console.log('startTime' + startTime);
+    var endStr = matchPattern[1].trim();
+    var endTime = parseTime(endStr);
+
+    var itemText = rawText.replace(pattern2, '').trim();
+    result = new item(rawText, itemText, startTime, endTime, formatTime(startTime), formatTime(endTime), true, true);
+    return result;
+}
 
 function parseTime(timeStr){
+    timeStr = timeStr.trim();
+    console.log('parseTime, input string is: ' + timeStr);
     var currentTimeStamp = new Date();
     var resultTime = null;
     var h=null;
     var m=null;
-    if(timeStr.toLowerCase()==='now'){
+    if(timeStr.toLowerCase()=='now'){
         resultTime = currentTimeStamp;
+        console.log('is now');
     }
     else{
+        console.log('is not now');
         if (timeStr.length == 3){
             h = timeStr[0]
             m = timeStr[1] + timeStr[2]
