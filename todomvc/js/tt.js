@@ -88,7 +88,7 @@ function parsePattern1(rawText){
 }
 
 function parsePattern2(rawText, items){
-    console.log('pattern2');
+    console.log('--pattern2');
     var matchPattern = pattern2.exec(rawText);
     var startTime = new Date();
     //calculate the latest time from existing items
@@ -101,14 +101,15 @@ function parsePattern2(rawText, items){
         for(i=0;i<items.length;i++){
             if(items[i].endTime > maxTime){
                 maxTime = items[i].endTime;
-                console.log('--maxTime' + maxTime);
+
             }
         }
         startTime = new Date(maxTime);//TODO
     }
+    
 
-    console.log('startTime' + startTime);
     var endStr = matchPattern[1].trim();
+
     var endTime = parseTime(endStr);
 
     var itemText = rawText.replace(pattern2, '').trim();
@@ -118,17 +119,15 @@ function parsePattern2(rawText, items){
 
 function parseTime(timeStr){
     timeStr = timeStr.trim();
-    console.log('parseTime, input string is: ' + timeStr);
+    
     var currentTimeStamp = new Date();
     var resultTime = null;
     var h=null;
     var m=null;
     if(timeStr.toLowerCase()=='now'){
         resultTime = currentTimeStamp;
-        console.log('is now');
     }
     else{
-        console.log('is not now');
         if (timeStr.length == 3){
             h = timeStr[0]
             m = timeStr[1] + timeStr[2]
