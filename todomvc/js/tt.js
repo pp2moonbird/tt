@@ -19,7 +19,8 @@ var app = new Vue({
 
     data: {
         newText: '',
-        items: todoStorage.fetch()
+        items: todoStorage.fetch(),
+        editedItem : null
     },
 
     watch:{
@@ -55,6 +56,28 @@ var app = new Vue({
                 //return result;
             }
             this.newText=''
+        },
+
+        editItem: function(item){
+            this.beforeEditCache = item.rawText;
+            this.editedItem = item;
+        },
+
+        cancelEdit: function(item){
+            this.editedItem = null;
+            item.rawText = this.beforeEditCache;
+        }
+    },
+
+    directives : {
+        'item-focus': function(value){
+            if(!value){
+                return;
+            }
+            var el = this.el;
+                Vue.nextTick(function () {
+                el.focus();
+            });
         }
     }
 });
@@ -99,9 +122,10 @@ function parsePattern2(rawText, items){
         maxTime = items[0].endTime;
 
         for(i=0;i<items.length;i++){
-            if(items[i].endTime > maxTime){
+            console.log(maxTime + ", " + items[i].endTime + ", " + (new Date(items[i].endTime) > new Date(maxTime)));
+            if(new Date(items[i].endTime) > new Date(maxTime)){
                 maxTime = items[i].endTime;
-
+                
             }
         }
         startTime = new Date(maxTime);//TODO
@@ -162,8 +186,8 @@ function parseTime(timeStr){
 }
 
 function formatTime(timestamp){
-    hour = timestamp.getHours();
-    minute = timestamp.getMinutes();
+    var hour = timestamp.getHours();
+    var minute = timestamp.getMinutes();
     
     var result = timestamp.getHours() + ((minute < 10) ? ":0" : ":") + minute;
     return result;

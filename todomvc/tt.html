@@ -26,23 +26,25 @@
                 <div class="row">
                     <table class="table">
                         <tr>
-                            <!--<th>Raw Text</th>-->
                             <th>Item Text</th>
                             <th>Start Time</th>
                             <th>End Time</th>
-                            <!--<th>Completed</th>
-                            <th>Valid</th>-->
                         </tr>
-                        <tr v-for="item in items">
-                            <!--<td>
-                                {{item.rawText}}
-                            </td>-->
-                            <td>{{item.itemText}}</td>
-                            <td>{{item.startTimeStr}}</td>
-                            <td>{{item.endTimeStr}}</td>
-                            <!--<td>{{item.completed}}</td>
-                            <td>{{item.valid}}</td>-->
+                        <tr v-for="item in items" :class="{editing: item == editedItem}">
+                            <td class="edit" colspan=3>
+                                <input type="text" class="form-control" 
+                                    v-model="item.title" 
+                                    @blur = "cancelEdit(item)"
+                                    @keyup.esc="cancelEdit(item)"
+                                    v-item-focus="item==editedItem"
+                                >
+                            </td>
+                            <td class="view" @dblclick="editItem(item)">{{item.itemText}}</td>
+                            <td class="view">{{item.startTimeStr}}</td>
+                            <td class="view">{{item.endTimeStr}}</td>
+
                         </tr>
+
                     </table>
 
                 </div>
@@ -51,7 +53,7 @@
     </div>
 
     <script type="text/javascript" src="../vue.js"></script>
-    <script type="text/javascript" src="js/tt.js"></script>    
+    <script type="text/javascript" src="js/tt.js"></script>
 </body>
 
 </html>
