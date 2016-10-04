@@ -33,10 +33,11 @@
                         <tr v-for="item in items" :class="{editing: item == editedItem}">
                             <td class="edit" colspan=3>
                                 <input type="text" class="form-control" 
-                                    v-model="item.title" 
+                                    v-model="item.rawText" 
                                     @blur = "cancelEdit(item)"
                                     @keyup.esc="cancelEdit(item)"
                                     v-item-focus="item==editedItem"
+                                    @keyup.enter = "doneEdit(item)"
                                 >
                             </td>
                             <td class="view" @dblclick="editItem(item)">{{item.itemText}}</td>

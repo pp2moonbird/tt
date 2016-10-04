@@ -35,27 +35,9 @@ var app = new Vue({
     methods: {
         addItem: function(){
             var value = this.newText && this.newText.trim();
-            if(!value){
-                return;
-            }
-
-            if(pattern1.test(value)){
-                var result = parsePattern1(value);
-                this.items.push(result);
-            }
-            else if(pattern2.test(value)){
-                var result = parsePattern2(value, this.items);
-                this.items.push(result);
-            }
-            else if(pattern3.test(value)){
-
-            }
-            //invalid string
-            else{
-                result = new item(value, 'no match', null, null, null, null, false, false);
-                //return result;
-            }
-            this.newText=''
+            var result = parseRawTextToItem(value, this.items);
+            this.items.push(result);
+            this.newText='';
         },
 
         editItem: function(item){
@@ -66,6 +48,24 @@ var app = new Vue({
         cancelEdit: function(item){
             this.editedItem = null;
             item.rawText = this.beforeEditCache;
+        },
+
+        doneEdit: function(item){
+            if(!this.editedItem){
+                return;
+            }
+            this.editedItem=null;
+            var result = parseRawTextToItem(item.rawText, this.items);
+            // console.log('result:');
+            // console.log(result);
+
+            
+            var index = this.items.indexOf(item);
+            
+            item = result; //value not passed, why
+            this.items.splice(index, 1 , item)
+            // console.log('item');
+            // console.log(item);
         }
     },
 
@@ -82,6 +82,28 @@ var app = new Vue({
     }
 });
 
+
+function parseRawTextToItem(value, items){
+    if(!value){
+        return;
+    }
+
+    if(pattern1.test(value)){
+        var result = parsePattern1(value);
+    }
+    else if(pattern2.test(value)){
+        var result = parsePattern2(value, items);
+    }
+    else if(pattern3.test(value)){
+
+    }
+    //invalid string
+    else{
+        var result = new item(value, 'no match', null, null, null, null, false, false);
+        //return result;
+    }
+    return result;
+}
 
 function item(rawText, itemText, startTime, endTime, startTimeStr, endTimeStr, completed, valid){
     this.rawText = rawText;
@@ -100,9 +122,9 @@ function parsePattern1(rawText){
     var startStr = matchPattern[1].trim()
     var endStr = matchPattern[2].trim()
 
-    console.log('---start parse start time');
+    // console.log('---start parse start time');
     var startTime = parseTime(startStr);
-    console.log('---start parse end time');
+    // console.log('---start parse end time');
     var endTime = parseTime(endStr);
 
     var itemText = rawText.replace(pattern1, '').trim();
@@ -111,7 +133,7 @@ function parsePattern1(rawText){
 }
 
 function parsePattern2(rawText, items){
-    console.log('--pattern2');
+    // console.log('--pattern2');
     var matchPattern = pattern2.exec(rawText);
     var startTime = new Date();
     //calculate the latest time from existing items
@@ -122,7 +144,7 @@ function parsePattern2(rawText, items){
         maxTime = items[0].endTime;
 
         for(i=0;i<items.length;i++){
-            console.log(maxTime + ", " + items[i].endTime + ", " + (new Date(items[i].endTime) > new Date(maxTime)));
+            // console.log(maxTime + ", " + items[i].endTime + ", " + (new Date(items[i].endTime) > new Date(maxTime)));
             if(new Date(items[i].endTime) > new Date(maxTime)){
                 maxTime = items[i].endTime;
                 
@@ -131,9 +153,7 @@ function parsePattern2(rawText, items){
         startTime = new Date(maxTime);//TODO
     }
     
-
     var endStr = matchPattern[1].trim();
-
     var endTime = parseTime(endStr);
 
     var itemText = rawText.replace(pattern2, '').trim();
