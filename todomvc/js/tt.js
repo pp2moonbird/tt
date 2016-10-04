@@ -66,6 +66,10 @@ var app = new Vue({
             this.items.splice(index, 1 , item)
             // console.log('item');
             // console.log(item);
+        },
+
+        removeItem: function(item){
+            this.items.$remove(item);
         }
     },
 
