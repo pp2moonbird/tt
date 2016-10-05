@@ -103,13 +103,13 @@ function parseRawTextToItem(value, items){
     }
     //invalid string
     else{
-        var result = new item(value, 'no match', null, null, null, null, false, false);
+        var result = new item(value, 'no match', null, null, false, false);
         //return result;
     }
     return result;
 }
 
-function item(rawText, itemText, startTime, endTime, startTimeStr, endTimeStr, completed, valid){
+function item(rawText, itemText, startTime, endTime, completed, valid){
     this.rawText = rawText;
     this.itemText = itemText;
     this.startTime = startTime;
@@ -132,7 +132,7 @@ function parsePattern1(rawText){
     var endTime = parseTime(endStr);
 
     var itemText = rawText.replace(pattern1, '').trim();
-    result = new item(rawText, itemText, startTime, endTime, formatTime(startTime), formatTime(endTime), true, true);
+    result = new item(rawText, itemText, startTime, endTime, true, true);
     return result;
 }
 
@@ -161,7 +161,7 @@ function parsePattern2(rawText, items){
     var endTime = parseTime(endStr);
 
     var itemText = rawText.replace(pattern2, '').trim();
-    result = new item(rawText, itemText, startTime, endTime, formatTime(startTime), formatTime(endTime), true, true);
+    result = new item(rawText, itemText, startTime, endTime, true, true);
     return result;
 }
 
