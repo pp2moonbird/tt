@@ -1,6 +1,6 @@
 var pattern1 = /(\d{3,4}|now)\s*-\s*(\d{3,4}|now)/
-var pattern2 = /-\s*(now)/
-var pattern3 = /(now)\s*-/
+var pattern2 = /-\s*(\d{3,4}|now)/
+var pattern3 = /(\d{3,4}|now)\s*-/
 
 var STORAGE_KEY = 'tt';
 
@@ -86,25 +86,31 @@ var app = new Vue({
     }
 });
 
-
+// extract all elements
+// remove all special syntax and rest is item text
+// build item
 function parseRawTextToItem(value, items){
-    if(!value){
-        return;
+    var result = null;
+    var duration = extractDuration(value, items);
+    if(duration.isValid){
+        result = new item(value, duration.leftOver, duration.startTime, duration.endTime, new Boolean(duration.endTime), duration.valid);
     }
+    return result;
+}
 
+function extractDuration(value, items){
+    var result = null;
     if(pattern1.test(value)){
-        var result = parsePattern1(value);
+        result = parsePattern1(value);
     }
     else if(pattern2.test(value)){
-        var result = parsePattern2(value, items);
+        result = parsePattern2(value, items);
     }
     else if(pattern3.test(value)){
 
     }
-    //invalid string
     else{
-        var result = new item(value, 'no match', null, null, false, false);
-        //return result;
+
     }
     return result;
 }
@@ -121,23 +127,30 @@ function item(rawText, itemText, startTime, endTime, completed, valid){
 
 }
 
+function duration(startTime, endTime, isValid, leftOver){
+    this.startTime = startTime;
+    this.endTime = endTime;
+    this.isValid = isValid;
+    this.leftOver = leftOver;
+}
+
 function parsePattern1(rawText){
+    var result = null;
+
     var matchPattern = pattern1.exec(rawText);
     var startStr = matchPattern[1].trim()
     var endStr = matchPattern[2].trim()
 
-    // console.log('---start parse start time');
     var startTime = parseTime(startStr);
-    // console.log('---start parse end time');
     var endTime = parseTime(endStr);
 
-    var itemText = rawText.replace(pattern1, '').trim();
-    result = new item(rawText, itemText, startTime, endTime, true, true);
+    var leftOver = rawText.replace(pattern1, '').trim();
+    result = new duration(startTime, endTime, true, leftOver);
     return result;
 }
 
 function parsePattern2(rawText, items){
-    // console.log('--pattern2');
+    var result = null;
     var matchPattern = pattern2.exec(rawText);
     var startTime = new Date();
     //calculate the latest time from existing items
@@ -154,14 +167,14 @@ function parsePattern2(rawText, items){
                 
             }
         }
-        startTime = new Date(maxTime);//TODO
+        startTime = new Date(maxTime);//TODO, why need this conversion?
     }
     
     var endStr = matchPattern[1].trim();
     var endTime = parseTime(endStr);
 
-    var itemText = rawText.replace(pattern2, '').trim();
-    result = new item(rawText, itemText, startTime, endTime, true, true);
+    var leftOver = rawText.replace(pattern2, '').trim();
+    result = new duration(startTime, endTime, true, leftOver);
     return result;
 }
 
@@ -189,6 +202,7 @@ function parseTime(timeStr){
         var minute = Number(m);
         console.log('h' + hour);
         console.log('m' + minute)
+        //TODO need replace with new structure
         if(hour>24 || minute > 60){
             result = new item(rawText, 'invalid text, number format error', null, null, null, null, false, false);
             return result;
