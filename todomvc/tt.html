@@ -31,6 +31,7 @@
                             <th>Item Text</th>
                             <th>Start Time</th>
                             <th>End Time</th>
+                            <th>Tags</th>
                             <th>Delete</th>
                         </tr>
                         <tr v-for="item in items" :class="{editing: item == editedItem}">
@@ -46,6 +47,7 @@
                             <td class="view" @dblclick="editItem(item)">{{item.itemText}}</td>
                             <td class="view">{{item.startTimeStr}}</td>
                             <td class="view">{{item.endTimeStr}}</td>
+                            <td class="view">{{item.tags}}</td>
                             <td>
                                 <button class="btn btn-default" type="submit" @click="removeItem(item)">
                                     <i class="fa fa-times" aria-hidden="true" ></i>

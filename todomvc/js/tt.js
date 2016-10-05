@@ -1,7 +1,7 @@
 var pattern1 = /(\d{3,4}|now)\s*-\s*(\d{3,4}|now)/
 var pattern2 = /-\s*(\d{3,4}|now)/
 var pattern3 = /(\d{3,4}|now)\s*-/
-
+var tagPattern = /#(\w+),*/g
 var STORAGE_KEY = 'tt';
 
 todoStorage = {
@@ -92,10 +92,37 @@ var app = new Vue({
 function parseRawTextToItem(value, items){
     var result = null;
     var duration = extractDuration(value, items);
+    var leftOver = duration.leftOver;
+    var tagObject = extractTags(leftOver);
+
     if(duration.isValid){
-        result = new item(value, duration.leftOver, duration.startTime, duration.endTime, new Boolean(duration.endTime), duration.valid);
+        result = new item(value, tagObject.leftOver, duration.startTime, duration.endTime, tagObject.tags, new Boolean(duration.endTime), duration.valid);
     }
     return result;
+}
+
+function extractTags(value){
+    var tags = [];
+    var leftOver = '';
+    var regResult;
+    //if (tagPattern.test(value)){
+        while(true){
+            regResult = tagPattern.exec(value);
+            if(regResult==null){
+                break;
+            }
+            var tag = regResult[1];
+            tags.push(tag);
+        }
+        leftOver = value.replace(tagPattern, '').trim();
+    //}
+    var result = new tagResultObject(tags, leftOver);
+    return result;
+}
+
+function tagResultObject(tags, leftOver){
+    this.tags = tags;
+    this.leftOver = leftOver;
 }
 
 function extractDuration(value, items){
@@ -115,11 +142,12 @@ function extractDuration(value, items){
     return result;
 }
 
-function item(rawText, itemText, startTime, endTime, completed, valid){
+function item(rawText, itemText, startTime, endTime, tags, completed, valid){
     this.rawText = rawText;
     this.itemText = itemText;
     this.startTime = startTime;
     this.endTime = endTime;
+    this.tags = tags;
     this.startTimeStr = formatTime(startTime);
     this.endTimeStr = formatTime(endTime);
     this.completed = completed;
