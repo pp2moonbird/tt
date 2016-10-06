@@ -63,9 +63,19 @@ var app = new Vue({
             var index = this.items.indexOf(item);
             
             item = result; //value not passed, why
-            this.items.splice(index, 1 , item)
+            this.items.splice(index, 1 , item);
             // console.log('item');
             // console.log(item);
+        },
+
+        completeItem: function(item){
+            var endTime = new Date();
+            item.endTime = endTime;
+            item.endTimeStr = formatTime(endTime);
+            item.completed = true;
+
+            var index = this.items.indexOf(item);
+            this.items.splice(index, 1 , item);
         },
 
         removeItem: function(item){
@@ -96,7 +106,14 @@ function parseRawTextToItem(value, items){
     var tagObject = extractTags(leftOver);
 
     if(duration.isValid){
-        result = new item(value, tagObject.leftOver, duration.startTime, duration.endTime, tagObject.tags, new Boolean(duration.endTime), duration.valid);
+        result = new item(
+            value, 
+            tagObject.leftOver, 
+            duration.startTime, 
+            duration.endTime, 
+            tagObject.tags, 
+            new Boolean(duration.endTime), 
+            duration.valid);
     }
     return result;
 }
@@ -134,7 +151,7 @@ function extractDuration(value, items){
         result = parsePattern2(value, items);
     }
     else if(pattern3.test(value)){
-
+        result = parsePattern3(value);
     }
     else{
 
@@ -206,6 +223,17 @@ function parsePattern2(rawText, items){
     return result;
 }
 
+function parsePattern3(rawText){
+    var result = null;
+    var matchPattern = pattern3.exec(rawText);
+    var startTimeStr = matchPattern[1]
+    var startTime = parseTime(startTimeStr);
+
+    var leftOver = rawText.replace(pattern3, '').trim();
+    result = new duration(startTime, null, true, leftOver);
+    return result; 
+}
+
 function parseTime(timeStr){
     timeStr = timeStr.trim();
     
@@ -252,9 +280,12 @@ function parseTime(timeStr){
 }
 
 function formatTime(timestamp){
-    var hour = timestamp.getHours();
-    var minute = timestamp.getMinutes();
-    
-    var result = timestamp.getHours() + ((minute < 10) ? ":0" : ":") + minute;
+    var result = null;
+    if(timestamp){
+        var hour = timestamp.getHours();
+        var minute = timestamp.getMinutes();
+        
+        result = timestamp.getHours() + ((minute < 10) ? ":0" : ":") + minute;
+    }
     return result;
 }
