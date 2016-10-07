@@ -19,3 +19,7 @@ tr.editing td.view{
 tr.editing td.edit{
     display: block;
 }
+
+.force-parent-lh {
+  line-height: inherit !important;
+}

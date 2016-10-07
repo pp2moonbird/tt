@@ -20,7 +20,8 @@ var app = new Vue({
     data: {
         newText: '',
         items: todoStorage.fetch(),
-        editedItem : null
+        editedItem : null,
+        selectedDate: new Date()
     },
 
     watch:{
@@ -29,6 +30,36 @@ var app = new Vue({
                 todoStorage.save(items);
             },
             deep: true
+        }
+    },
+
+    computed:{
+        isBetweenDate: function(){
+            var dayStartTime = null;
+            if(this.selectedDate){
+                dayStartTime = this.selectedDate;
+            }
+            else{
+                dayStartTime = new Date();
+            }
+            dayStartTime = new Date(dayStartTime.toLocaleDateString());
+            var dayEndTime = new Date(dayStartTime.getTime() + 24 * 3600 * 1000);
+            function compare(time){
+                var a = new Date(time) >= dayStartTime; //TODO why need this conversion?
+                var b = new Date(time) < dayEndTime;
+                var result = a && b;
+                return result;
+            }
+            return compare;
+        },
+
+        filteredItems: function(){
+            var isBetweenDate = this.isBetweenDate;
+            var result = this.items.filter(function(item){
+                var result = isBetweenDate(item.startTime);
+                return result;
+            });
+            return result;   
         }
     },
 
@@ -112,7 +143,7 @@ function parseRawTextToItem(value, items){
             duration.startTime, 
             duration.endTime, 
             tagObject.tags, 
-            new Boolean(duration.endTime), 
+            Boolean(duration.endTime), 
             duration.valid);
     }
     return result;
