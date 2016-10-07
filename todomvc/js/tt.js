@@ -34,6 +34,10 @@ var app = new Vue({
     },
 
     computed:{
+        formattedSelectedDate: function(){
+            return this.selectedDate.toLocaleDateString();
+        },
+
         isBetweenDate: function(){
             var dayStartTime = null;
             if(this.selectedDate){
