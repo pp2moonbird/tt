@@ -115,6 +115,20 @@ var app = new Vue({
 
         removeItem: function(item){
             this.items.$remove(item);
+        },
+
+        jumpToPreviousDay: function(){
+            var selectedDate = this.selectedDate;
+            this.selectedDate = new Date(selectedDate.getTime() - 24 * 3600 * 1000);
+        },
+
+        jumpToToday: function(){
+            this.selectedDate = new Date(new Date().toLocaleDateString());
+        },
+
+        jumpToNextDay: function(){
+            var selectedDate = this.selectedDate;
+            this.selectedDate = new Date(selectedDate.getTime() + 24 * 3600 * 1000);
         }
     },
 

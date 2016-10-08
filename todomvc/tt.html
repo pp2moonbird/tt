@@ -15,6 +15,7 @@
         <h1>TimeTracker</h1>
 
         <div id="ttapp">
+            <!--input box here-->
             <div class="row">
                 <div class="input-group">
                     <input type="text" class="form-control" v-model="newText" @keyup.enter="addItem">
@@ -23,22 +24,24 @@
                     </span>
                 </div>
             </div>
+            <!--calendar switcher-->
             <div class="margin-top">
                 <div class="row text-center">
                     <div class="btn-group" role="group" aria-label="...">
-                        <button type="button" class="btn btn-default">
+                        <button type="button" class="btn btn-default" @click="jumpToPreviousDay">
                             <i class="force-parent-lh fa fa-chevron-left" aria-hidden="true"></i>
                         </button>
                         <button type="button" class="btn btn-default">{{formattedSelectedDate}}</button>
-                        <button type="button" class="btn btn-default">
+                        <button type="button" class="btn btn-default" @click="jumpToToday">
                             <i class="force-parent-lh fa fa-calendar-check-o" aria-hidden="true"></i>
                         </button>
-                         <button type="button" class="btn btn-default">
+                         <button type="button" class="btn btn-default" @click="jumpToNextDay">
                             <i class="force-parent-lh fa fa-chevron-right" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
             </div>
+            <!--detail table here-->
             <div class="margin-top">
                 <div class="row">
                     <table class="table">
