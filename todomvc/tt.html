@@ -46,10 +46,12 @@
                 <div class="row">
                     <table class="table">
                         <tr>
-                            <th class="col-md-6">Item Text</th>
+                            <th class="col-md-4">Item Text</th>
                             <th class="col-md-2">Start Time</th>
                             <th class="col-md-2">End Time</th>
                             <th class="col-md-1">Tags</th>
+                            <th class="col-md-1">Persons</th>
+                            <th class="col-md-1">Status</th>
                             <th class="col-md-1">Delete</th>
                         </tr>
                         <tr v-for="item in filteredItems" :class="{editing: item == editedItem}">
@@ -74,6 +76,8 @@
                             </template>
                             
                             <td class="view">{{item.tags}}</td>
+                            <td class="view">{{item.persons}}</td>
+                            <td class="view">{{item.status}}</td>
                             <td>
                                 <button class="btn btn-default" type="submit" @click="removeItem(item)">
                                     <i class="fa fa-times" aria-hidden="true" ></i>

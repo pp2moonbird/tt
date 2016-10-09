@@ -2,6 +2,8 @@ var pattern1 = /(\d{3,4}|now)\s*-\s*(\d{3,4}|now)/
 var pattern2 = /-\s*(\d{3,4}|now)/
 var pattern3 = /(\d{3,4}|now)\s*-/
 var tagPattern = /#(\w+),*/g
+var personPattern = /@(\w+),*/g
+var statusPattern = /\$(\d)/
 var STORAGE_KEY = 'tt';
 
 todoStorage = {
@@ -157,14 +159,21 @@ function parseRawTextToItem(value, items){
     var duration = extractDuration(value, items);
     var leftOver = duration.leftOver;
     var tagObject = extractTags(leftOver);
+    leftOver = tagObject.leftOver;
+    var personObject = extractPersons(leftOver);
+    leftOver = personObject.leftOver;
+    var statusObject = extractStatus(leftOver);
+    leftOver = statusObject.leftOver;
 
     if(duration.isValid){
         result = new item(
             duration.rawText, 
-            tagObject.leftOver, 
+            leftOver, 
             duration.startTime, 
             duration.endTime, 
             tagObject.tags, 
+            personObject.persons,
+            statusObject.status,
             Boolean(duration.endTime), 
             duration.valid);
     }
@@ -195,6 +204,51 @@ function tagResultObject(tags, leftOver){
     this.leftOver = leftOver;
 }
 
+function extractPersons(value){
+    var persons = [];
+    var leftOver = '';
+    var regResult;
+    while(true){
+        regResult = personPattern.exec(value);
+        if(regResult==null){
+            break;
+        }
+        var person = regResult[1];
+        persons.push(person);
+    }
+    leftOver = value.replace(personPattern, '').trim();
+
+    var result = new personResultObject(persons, leftOver);
+    return result;
+}
+
+function personResultObject(persons, leftOver){
+    this.persons = persons;
+    this.leftOver = leftOver;
+}
+
+function extractStatus(value){
+    var status = '';
+    var leftOver = '';
+    var regResult;
+
+    if(statusPattern.test(value)){
+        regResult = statusPattern.exec(value);
+        status = regResult[1];
+    }
+
+    leftOver = value.replace(statusPattern, '').trim();
+
+    var result = new statusResultObject(status, leftOver);
+    return result;
+}
+
+function statusResultObject(status, leftOver){
+    this.status = status;
+    this.leftOver = leftOver;
+}
+
+
 function extractDuration(value, items){
     var result = null;
     if(pattern1.test(value)){
@@ -223,12 +277,14 @@ function formatTimeToRawTextFormat(time){
     else return '';
 }
 
-function item(rawText, itemText, startTime, endTime, tags, completed, valid){
+function item(rawText, itemText, startTime, endTime, tags, persons, status, completed, valid){
     this.rawText = rawText;
     this.itemText = itemText;
     this.startTime = startTime;
     this.endTime = endTime;
     this.tags = tags;
+    this.persons = persons;
+    this.status = status;
     this.startTimeStr = formatTime(startTime);
     this.endTimeStr = formatTime(endTime);
     this.completed = completed;
