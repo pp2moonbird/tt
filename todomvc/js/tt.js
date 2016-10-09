@@ -105,9 +105,13 @@ var app = new Vue({
 
         completeItem: function(item){
             var endTime = new Date();
-            item.endTime = endTime;
-            item.endTimeStr = formatTime(endTime);
-            item.completed = true;
+            var endTimeRawText = formatTimeToRawTextFormat(endTime);
+
+            var rawText = item.rawText;
+            var pattern3MatchResult = pattern3.exec(rawText)[0];
+            rawText = rawText.replace(pattern3, pattern3MatchResult + endTimeRawText);
+ 
+            item = parseRawTextToItem(rawText);
 
             var index = this.items.indexOf(item);
             this.items.splice(index, 1 , item);
@@ -156,7 +160,7 @@ function parseRawTextToItem(value, items){
 
     if(duration.isValid){
         result = new item(
-            value, 
+            duration.rawText, 
             tagObject.leftOver, 
             duration.startTime, 
             duration.endTime, 
@@ -208,6 +212,17 @@ function extractDuration(value, items){
     return result;
 }
 
+function formatTimeToRawTextFormat(time){
+    if(time){
+        var time = new Date(time);
+        var hour = time.getHours();
+        var minute = time.getMinutes();
+        var result = hour + ((minute < 10) ? "0" : "") + minute;
+        return result;
+    }
+    else return '';
+}
+
 function item(rawText, itemText, startTime, endTime, tags, completed, valid){
     this.rawText = rawText;
     this.itemText = itemText;
@@ -226,6 +241,7 @@ function duration(startTime, endTime, isValid, leftOver){
     this.endTime = endTime;
     this.isValid = isValid;
     this.leftOver = leftOver;
+    this.rawText = formatTimeToRawTextFormat(startTime) + '-' + formatTimeToRawTextFormat(endTime) + ' ' + leftOver;
 }
 
 function parsePattern1(rawText){
