@@ -193,7 +193,7 @@ function extractTags(value){
             var tag = regResult[1];
             tags.push(tag);
         }
-        leftOver = value.replace(tagPattern, '').trim();
+        leftOver = value;
     //}
     var result = new tagResultObject(tags, leftOver);
     return result;
@@ -216,7 +216,7 @@ function extractPersons(value){
         var person = regResult[1];
         persons.push(person);
     }
-    leftOver = value.replace(personPattern, '').trim();
+    leftOver = value;
 
     var result = new personResultObject(persons, leftOver);
     return result;
