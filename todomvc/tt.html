@@ -7,7 +7,10 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/tt.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
-
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="js/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
 </head>
 
 <body>
@@ -21,9 +24,20 @@
                     <input type="text" class="form-control" v-model="newText" @keyup.enter="addItem">
                     <span class="input-group-btn">
                         <button class="btn btn-default" type="button" @click="addItem">Go!</button>
+                        <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#fullJson">Show Data</button>
                     </span>
                 </div>
             </div>
+
+            <div class="margin-top">
+                <div id="fullJson" class="row collapse">
+                
+                <textarea name="" class="form-control" cols="30" rows="10">
+                    {{fullJson}}
+                </textarea>
+                </div>
+            </div>
+
             <!--calendar switcher-->
             <div class="margin-top">
                 <div class="row text-center">
@@ -89,6 +103,11 @@
 
                 </div>
             </div>
+
+
+
+
+
         </div>
     </div>
 

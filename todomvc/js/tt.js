@@ -66,6 +66,11 @@ var app = new Vue({
                 return result;
             });
             return result;   
+        },
+
+        fullJson: function(){
+            var result = JSON.stringify(this.items);
+            return result;
         }
     },
 
