@@ -25,6 +25,8 @@
                     <span class="input-group-btn">
                         <button class="btn btn-default" type="button" @click="addItem">Go!</button>
                         <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#fullJson">Show Data</button>
+                        <button class="btn btn-default" type="button" @click="saveData">Save</button>
+                        <button class="btn btn-default" type="button" @click="loadData">Load</button>
                     </span>
                 </div>
             </div>
@@ -112,6 +114,7 @@
     </div>
 
     <script type="text/javascript" src="static/js/vue.js"></script>
+    <script type="text/javascript" src="static/js/vue-resource.js"></script>
     <script type="text/javascript" src="static/js/tt.js"></script>
 </body>
 {% endraw %}

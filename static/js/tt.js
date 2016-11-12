@@ -75,6 +75,14 @@ var app = new Vue({
     },
 
     methods: {
+        saveData: function(){
+            this.$http.post('/data', JSON.stringify(this.items));
+        },
+
+        loadData: function(){
+            this.$http.get('/data').then((response)=>{this.items = response.body})
+        },
+
         addItem: function(){
             var value = this.newText && this.newText.trim();
             var result = parseRawTextToItem(value, this.items);
