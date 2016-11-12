@@ -5,6 +5,9 @@ from flask import request
 
 app = Flask(__name__)
 
+with open('./config/config.txt', 'r') as configfile:
+    datafilepath = configfile.readline()
+
 
 @app.route('/')
 def index():
@@ -14,7 +17,7 @@ def index():
 @app.route('/data')
 def data():
     result = None
-    with open('data.json', 'r') as inputfile:
+    with open(datafilepath, 'r') as inputfile:
         student = json.load(inputfile)
     result = jsonify(student)
     return result
@@ -24,10 +27,17 @@ def data():
 def writeData():
     a = request.json
     print(a)
-    with open('data.json', 'w') as outputfile:
+    with open(datafilepath, 'w') as outputfile:
         json.dump(a, outputfile)
     return 'ok'
 
+def testConfig():
+    with open('./config/config.txt', 'r') as configfile:
+        configfilepath = configfile.readline()
+        print(configfilepath)
+        with open(configfilepath) as jsonfile:
+            for line in jsonfile.readlines():
+                print(line)
 
 if __name__ == '__main__':
     app.run(debug=True)
