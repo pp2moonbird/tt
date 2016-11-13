@@ -80,7 +80,7 @@ var app = new Vue({
         },
 
         loadData: function(){
-            this.$http.get('/data').then((response)=>{this.items = response.body})
+            this.$http.get('/data').then((response)=>{this.items = response.body.data})
         },
 
         addItem: function(){
