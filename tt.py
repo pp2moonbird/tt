@@ -19,7 +19,8 @@ def data():
     result = None
     with open(datafilepath, 'r') as inputfile:
         student = json.load(inputfile)
-    result = jsonify(student)
+        print(student)
+    result = jsonify(data = student)
     return result
 
 
