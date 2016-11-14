@@ -1,11 +1,6 @@
-vue.md
-note.md
-test.html
-test.js
-tt.bat
-test2.html
-test2.js
-jsconfig.json
 .idea
 tt.md
 .vscode
+analysis/tt.csv
+analysis/tt.xlsx
+config/config.txt

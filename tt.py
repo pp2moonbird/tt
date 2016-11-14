@@ -19,7 +19,7 @@ def data():
     result = None
     with open(datafilepath, 'r') as inputfile:
         student = json.load(inputfile)
-        print(student)
+        # print(student)
     result = jsonify(data = student)
     return result
 
@@ -27,7 +27,7 @@ def data():
 @app.route('/data', methods=['POST'])
 def writeData():
     a = request.json
-    print(a)
+    # print(a)
     with open(datafilepath, 'w') as outputfile:
         json.dump(a, outputfile)
     return 'ok'
