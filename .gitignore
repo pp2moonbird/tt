@@ -3,4 +3,5 @@ tt.md
 .vscode
 analysis/tt.csv
 analysis/tt.xlsx
+tt.bat
 config/config.txt
