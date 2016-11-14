@@ -7,8 +7,9 @@ with open('../config/config.txt', 'r') as configfile:
 file = open(datafilepath, encoding="utf-8")
 data = json.load(file)
 
-print(data)
-print(type(data))
 df = pd.DataFrame(data)
+df['tags'] = df['tags'].apply(lambda x: x[0] if len(x)>0 else 'untagged')
+df['persons'] = df['persons'].apply(lambda x: ','.join(x))
+
 df.to_csv('tt.csv')
 print(df)
