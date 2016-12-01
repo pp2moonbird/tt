@@ -13,6 +13,11 @@
     <script src="static/js/bootstrap.min.js"></script>
 </head>
 {% raw %}
+<script>
+    $(window).bind('beforeunload', function(){ 
+    return 'Are you sure to leave this page?'; 
+});
+</script>
 <body>
     <div class="container">
         <h1>TimeTracker</h1>
