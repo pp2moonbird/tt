@@ -193,75 +193,6 @@ function parseRawTextToItem(value, items){
     return result;
 }
 
-function extractTags(value){
-    var tags = [];
-    var leftOver = '';
-    var regResult;
-    //if (tagPattern.test(value)){
-        while(true){
-            regResult = tagPattern.exec(value);
-            if(regResult==null){
-                break;
-            }
-            var tag = regResult[1];
-            tags.push(tag);
-        }
-        leftOver = value;
-    //}
-    var result = new tagResultObject(tags, leftOver);
-    return result;
-}
-
-function tagResultObject(tags, leftOver){
-    this.tags = tags;
-    this.leftOver = leftOver;
-}
-
-function extractPersons(value){
-    var persons = [];
-    var leftOver = '';
-    var regResult;
-    while(true){
-        regResult = personPattern.exec(value);
-        if(regResult==null){
-            break;
-        }
-        var person = regResult[1];
-        persons.push(person);
-    }
-    leftOver = value;
-
-    var result = new personResultObject(persons, leftOver);
-    return result;
-}
-
-function personResultObject(persons, leftOver){
-    this.persons = persons;
-    this.leftOver = leftOver;
-}
-
-function extractStatus(value){
-    var status = '';
-    var leftOver = '';
-    var regResult;
-
-    if(statusPattern.test(value)){
-        regResult = statusPattern.exec(value);
-        status = regResult[1];
-    }
-
-    leftOver = value.replace(statusPattern, '').trim();
-
-    var result = new statusResultObject(status, leftOver);
-    return result;
-}
-
-function statusResultObject(status, leftOver){
-    this.status = status;
-    this.leftOver = leftOver;
-}
-
-
 function extractDuration(value, items){
     var result = null;
     if(pattern1.test(value)){
@@ -277,40 +208,6 @@ function extractDuration(value, items){
 
     }
     return result;
-}
-
-function formatTimeToRawTextFormat(time){
-    if(time){
-        var time = new Date(time);
-        var hour = time.getHours();
-        var minute = time.getMinutes();
-        var result = hour + ((minute < 10) ? "0" : "") + minute;
-        return result;
-    }
-    else return '';
-}
-
-function item(rawText, itemText, startTime, endTime, tags, persons, status, completed, valid){
-    this.rawText = rawText;
-    this.itemText = itemText;
-    this.startTime = startTime;
-    this.endTime = endTime;
-    this.tags = tags;
-    this.persons = persons;
-    this.status = status;
-    this.startTimeStr = formatTime(startTime);
-    this.endTimeStr = formatTime(endTime);
-    this.completed = completed;
-    this.valid = valid;
-
-}
-
-function duration(startTime, endTime, isValid, leftOver){
-    this.startTime = startTime;
-    this.endTime = endTime;
-    this.isValid = isValid;
-    this.leftOver = leftOver;
-    this.rawText = formatTimeToRawTextFormat(startTime) + '-' + formatTimeToRawTextFormat(endTime) + ' ' + leftOver;
 }
 
 function parsePattern1(rawText){
@@ -411,6 +308,107 @@ function parseTime(timeStr){
     }
     resultTime = new Date(resultTime);
     return resultTime;
+}
+
+function duration(startTime, endTime, isValid, leftOver){
+    this.startTime = startTime;
+    this.endTime = endTime;
+    this.isValid = isValid;
+    this.leftOver = leftOver;
+    this.rawText = formatTimeToRawTextFormat(startTime) + '-' + formatTimeToRawTextFormat(endTime) + ' ' + leftOver;
+}
+
+function extractTags(value){
+    var tags = [];
+    var leftOver = '';
+    var regResult;
+    //if (tagPattern.test(value)){
+        while(true){
+            regResult = tagPattern.exec(value);
+            if(regResult==null){
+                break;
+            }
+            var tag = regResult[1];
+            tags.push(tag);
+        }
+        leftOver = value;
+    //}
+    var result = new tagResultObject(tags, leftOver);
+    return result;
+}
+
+function tagResultObject(tags, leftOver){
+    this.tags = tags;
+    this.leftOver = leftOver;
+}
+
+function extractPersons(value){
+    var persons = [];
+    var leftOver = '';
+    var regResult;
+    while(true){
+        regResult = personPattern.exec(value);
+        if(regResult==null){
+            break;
+        }
+        var person = regResult[1];
+        persons.push(person);
+    }
+    leftOver = value;
+
+    var result = new personResultObject(persons, leftOver);
+    return result;
+}
+
+function personResultObject(persons, leftOver){
+    this.persons = persons;
+    this.leftOver = leftOver;
+}
+
+function extractStatus(value){
+    var status = '';
+    var leftOver = '';
+    var regResult;
+
+    if(statusPattern.test(value)){
+        regResult = statusPattern.exec(value);
+        status = regResult[1];
+    }
+
+    leftOver = value.replace(statusPattern, '').trim();
+
+    var result = new statusResultObject(status, leftOver);
+    return result;
+}
+
+function statusResultObject(status, leftOver){
+    this.status = status;
+    this.leftOver = leftOver;
+}
+
+function item(rawText, itemText, startTime, endTime, tags, persons, status, completed, valid){
+    this.rawText = rawText;
+    this.itemText = itemText;
+    this.startTime = startTime;
+    this.endTime = endTime;
+    this.tags = tags;
+    this.persons = persons;
+    this.status = status;
+    this.startTimeStr = formatTime(startTime);
+    this.endTimeStr = formatTime(endTime);
+    this.completed = completed;
+    this.valid = valid;
+}
+
+function formatTimeToRawTextFormat(time){
+    if(time){
+        var time = new Date(time);
+        var hour = time.getHours();
+        var minute = time.getMinutes();
+        var result = hour + ((minute < 10) ? "0" : "") + minute;
+        return result;
+    }
+    else return '';
 }
 
 function formatTime(timestamp){
