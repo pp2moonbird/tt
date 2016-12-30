@@ -176,8 +176,8 @@ function parseRawTextToItem(rawText, items){
     rawText = statusObject.rawText;
 
     var duration = extractDuration(rawText, leftOver, items);
-
     leftOver = duration.leftOver;
+
     var tagObject = extractTags(leftOver);
     leftOver = tagObject.leftOver;
     var personObject = extractPersons(leftOver);
@@ -199,16 +199,16 @@ function parseRawTextToItem(rawText, items){
 }
 
 // var duration = extractDuration(rawText, leftOver, items);
-function extractDuration(value, items){
+function extractDuration(rawText, leftOver, items){
     var result = null;
-    if(pattern1.test(value)){
-        result = parsePattern1(value);
+    if(pattern1.test(rawText)){
+        result = parsePattern1(rawText, leftOver);
     }
-    else if(pattern2.test(value)){
-        result = parsePattern2(value, items);
+    else if(pattern2.test(rawText)){
+        result = parsePattern2(rawText, leftOver, items);
     }
-    else if(pattern3.test(value)){
-        result = parsePattern3(value);
+    else if(pattern3.test(rawText)){
+        result = parsePattern3(rawText, leftOver);
     }
     else{
 
@@ -216,7 +216,7 @@ function extractDuration(value, items){
     return result;
 }
 
-function parsePattern1(rawText){
+function parsePattern1(rawText, leftOver){
     var result = null;
 
     var matchPattern = pattern1.exec(rawText);
@@ -226,12 +226,15 @@ function parsePattern1(rawText){
     var startTime = parseTime(startStr);
     var endTime = parseTime(endStr);
 
-    var leftOver = rawText.replace(pattern1, '').trim();
-    result = new duration(startTime, endTime, true, leftOver);
+    rawText = formatTimeToRawTextFormat(startTime) + '-' + formatTimeToRawTextFormat(endTime) + ' ' + rawText.replace(pattern1, '').trim();
+    leftOver = leftOver.replace(pattern1, '').trim();
+
+    //this.rawText = formatTimeToRawTextFormat(startTime) + '-' + formatTimeToRawTextFormat(endTime) + ' ' + leftOver;
+    result = new duration(startTime, endTime, true, leftOver, rawText);
     return result;
 }
 
-function parsePattern2(rawText, items){
+function parsePattern2(rawText, leftOver, items){
     var result = null;
     var matchPattern = pattern2.exec(rawText);
     var startTime = new Date();
@@ -255,19 +258,21 @@ function parsePattern2(rawText, items){
     var endStr = matchPattern[1].trim();
     var endTime = parseTime(endStr);
 
-    var leftOver = rawText.replace(pattern2, '').trim();
-    result = new duration(startTime, endTime, true, leftOver);
+    rawText = formatTimeToRawTextFormat(startTime) + '-' + formatTimeToRawTextFormat(endTime) + ' ' + rawText.replace(pattern2, '').trim();
+    leftOver = leftOver.replace(pattern2, '').trim();
+    result = new duration(startTime, endTime, true, leftOver, rawText);
     return result;
 }
 
-function parsePattern3(rawText){
+function parsePattern3(rawText, leftOver){
     var result = null;
     var matchPattern = pattern3.exec(rawText);
     var startTimeStr = matchPattern[1]
     var startTime = parseTime(startTimeStr);
 
-    var leftOver = rawText.replace(pattern3, '').trim();
-    result = new duration(startTime, null, true, leftOver);
+    rawText = formatTimeToRawTextFormat(startTime) + '-' + formatTimeToRawTextFormat(null) + ' ' + rawText.replace(pattern3, '').trim();
+    leftOver = leftOver.replace(pattern3, '').trim();
+    result = new duration(startTime, null, true, leftOver, rawText);
     return result; 
 }
 
@@ -316,12 +321,12 @@ function parseTime(timeStr){
     return resultTime;
 }
 
-function duration(startTime, endTime, isValid, leftOver){
+function duration(startTime, endTime, isValid, leftOver, rawText){
     this.startTime = startTime;
     this.endTime = endTime;
     this.isValid = isValid;
     this.leftOver = leftOver;
-    this.rawText = formatTimeToRawTextFormat(startTime) + '-' + formatTimeToRawTextFormat(endTime) + ' ' + leftOver;
+    this.rawText = rawText;
 }
 
 function extractTags(value){
@@ -377,8 +382,8 @@ function extractStatus(rawText){
     var displayText = '';
     var regResult;
 
-    if(statusPattern.test(value)){
-        regResult = statusPattern.exec(value);
+    if(statusPattern.test(rawText)){
+        regResult = statusPattern.exec(rawText);
         status = regResult[1];
     }
     else{
@@ -386,7 +391,7 @@ function extractStatus(rawText){
         rawText = rawText + ' $2'
     }
 
-    displayText = value.replace(statusPattern, '').trim();
+    displayText = rawText.replace(statusPattern, '').trim();
 
     var result = new statusResultObject(rawText, status, displayText);
     return result;
