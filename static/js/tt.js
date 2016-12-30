@@ -167,16 +167,21 @@ var app = new Vue({
 // extract all elements
 // remove all special syntax and rest is item text
 // build item
-function parseRawTextToItem(value, items){
+function parseRawTextToItem(rawText, items){
     var result = null;
-    var duration = extractDuration(value, items);
-    var leftOver = duration.leftOver;
+    // extractStatus will return object with rawText, status and displayText
+    // change all leftOver to displayText
+    var statusObject = extractStatus(rawText);
+    var leftOver = statusObject.leftOver;
+    rawText = statusObject.rawText;
+
+    var duration = extractDuration(rawText, leftOver, items);
+
+    leftOver = duration.leftOver;
     var tagObject = extractTags(leftOver);
     leftOver = tagObject.leftOver;
     var personObject = extractPersons(leftOver);
     leftOver = personObject.leftOver;
-    var statusObject = extractStatus(leftOver);
-    leftOver = statusObject.leftOver;
 
     if(duration.isValid){
         result = new item(
@@ -193,6 +198,7 @@ function parseRawTextToItem(value, items){
     return result;
 }
 
+// var duration = extractDuration(rawText, leftOver, items);
 function extractDuration(value, items){
     var result = null;
     if(pattern1.test(value)){
@@ -365,23 +371,29 @@ function personResultObject(persons, leftOver){
     this.leftOver = leftOver;
 }
 
-function extractStatus(value){
+// extractStatus will return object with rawText, status and displayText
+function extractStatus(rawText){
     var status = '';
-    var leftOver = '';
+    var displayText = '';
     var regResult;
 
     if(statusPattern.test(value)){
         regResult = statusPattern.exec(value);
         status = regResult[1];
     }
+    else{
+        status = 2;
+        rawText = rawText + ' $2'
+    }
 
-    leftOver = value.replace(statusPattern, '').trim();
+    displayText = value.replace(statusPattern, '').trim();
 
-    var result = new statusResultObject(status, leftOver);
+    var result = new statusResultObject(rawText, status, displayText);
     return result;
 }
 
-function statusResultObject(status, leftOver){
+function statusResultObject(rawText, status, leftOver){
+    this.rawText = rawText;
     this.status = status;
     this.leftOver = leftOver;
 }
