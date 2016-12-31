@@ -258,7 +258,7 @@ function parsePattern2(rawText, leftOver, items, selectedDate){
         startTime = new Date();
     }
     else{
-        maxTime = items[0].endTime;
+        var maxTime = items[0].endTime;
 
         for(i=0;i<items.length;i++){
             // console.log(maxTime + ", " + items[i].endTime + ", " + (new Date(items[i].endTime) > new Date(maxTime)));
