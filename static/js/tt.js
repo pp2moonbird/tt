@@ -85,7 +85,7 @@ var app = new Vue({
 
         addItem: function(){
             var value = this.newText && this.newText.trim();
-            var result = parseRawTextToItem(value, this.items);
+            var result = parseRawTextToItem(value, this.items, this.selectedDate);
             this.items.push(result);
             this.newText='';
         },
@@ -105,7 +105,7 @@ var app = new Vue({
                 return;
             }
             this.editedItem=null;
-            var result = parseRawTextToItem(item.rawText, this.items);
+            var result = parseRawTextToItem(item.rawText, this.items, this.selectedDate);
             // console.log('result:');
             // console.log(result);
 
@@ -126,7 +126,7 @@ var app = new Vue({
             var pattern3MatchResult = pattern3.exec(rawText)[0];
             rawText = rawText.replace(pattern3, pattern3MatchResult + endTimeRawText);
  
-            item = parseRawTextToItem(rawText);
+            item = parseRawTextToItem(rawText, this.items, this.selectedDate);
 
             var index = this.items.indexOf(item);
             this.items.splice(index, 1 , item);
@@ -136,7 +136,7 @@ var app = new Vue({
             var rawText = item.rawText;
             rawText = rawText.replace(/\$\d/, "$" + newStatus);
 
-            item = parseRawTextToItem(rawText);
+            item = parseRawTextToItem(rawText, this.items, this.selectedDate);
 
             var index = this.items.indexOf(item);
             this.items.splice(index, 1 , item);
@@ -177,7 +177,7 @@ var app = new Vue({
 // extract all elements
 // remove all special syntax and rest is item text
 // build item
-function parseRawTextToItem(rawText, items){
+function parseRawTextToItem(rawText, items, selectedDate){
     var result = null;
     // extractStatus will return object with rawText, status and displayText
     // change all leftOver to displayText
@@ -185,7 +185,7 @@ function parseRawTextToItem(rawText, items){
     var leftOver = statusObject.leftOver;
     rawText = statusObject.rawText;
 
-    var duration = extractDuration(rawText, leftOver, items);
+    var duration = extractDuration(rawText, leftOver, items, selectedDate);
     leftOver = duration.leftOver;
 
     var tagObject = extractTags(leftOver);
@@ -209,16 +209,16 @@ function parseRawTextToItem(rawText, items){
 }
 
 // var duration = extractDuration(rawText, leftOver, items);
-function extractDuration(rawText, leftOver, items){
+function extractDuration(rawText, leftOver, items, selectedDate){
     var result = null;
     if(pattern1.test(rawText)){
-        result = parsePattern1(rawText, leftOver);
+        result = parsePattern1(rawText, leftOver, selectedDate);
     }
     else if(pattern2.test(rawText)){
-        result = parsePattern2(rawText, leftOver, items);
+        result = parsePattern2(rawText, leftOver, items, selectedDate);
     }
     else if(pattern3.test(rawText)){
-        result = parsePattern3(rawText, leftOver);
+        result = parsePattern3(rawText, leftOver, selectedDate);
     }
     else{
 
@@ -226,15 +226,15 @@ function extractDuration(rawText, leftOver, items){
     return result;
 }
 
-function parsePattern1(rawText, leftOver){
+function parsePattern1(rawText, leftOver, selectedDate){
     var result = null;
 
     var matchPattern = pattern1.exec(rawText);
     var startStr = matchPattern[1].trim()
     var endStr = matchPattern[2].trim()
 
-    var startTime = parseTime(startStr);
-    var endTime = parseTime(endStr);
+    var startTime = parseTime(startStr, selectedDate);
+    var endTime = parseTime(endStr, selectedDate);
 
     rawText = formatTimeToRawTextFormat(startTime) + '-' + formatTimeToRawTextFormat(endTime) + ' ' + rawText.replace(pattern1, '').trim();
     leftOver = leftOver.replace(pattern1, '').trim();
@@ -244,7 +244,7 @@ function parsePattern1(rawText, leftOver){
     return result;
 }
 
-function parsePattern2(rawText, leftOver, items){
+function parsePattern2(rawText, leftOver, items, selectedDate){
     var result = null;
     var matchPattern = pattern2.exec(rawText);
     var startTime = new Date();
@@ -266,7 +266,7 @@ function parsePattern2(rawText, leftOver, items){
     }
     
     var endStr = matchPattern[1].trim();
-    var endTime = parseTime(endStr);
+    var endTime = parseTime(endStr, selectedDate);
 
     rawText = formatTimeToRawTextFormat(startTime) + '-' + formatTimeToRawTextFormat(endTime) + ' ' + rawText.replace(pattern2, '').trim();
     leftOver = leftOver.replace(pattern2, '').trim();
@@ -274,11 +274,11 @@ function parsePattern2(rawText, leftOver, items){
     return result;
 }
 
-function parsePattern3(rawText, leftOver){
+function parsePattern3(rawText, leftOver, selectedDate){
     var result = null;
     var matchPattern = pattern3.exec(rawText);
     var startTimeStr = matchPattern[1]
-    var startTime = parseTime(startTimeStr);
+    var startTime = parseTime(startTimeStr, selectedDate);
 
     rawText = formatTimeToRawTextFormat(startTime) + '-' + formatTimeToRawTextFormat(null) + ' ' + rawText.replace(pattern3, '').trim();
     leftOver = leftOver.replace(pattern3, '').trim();
@@ -286,7 +286,7 @@ function parsePattern3(rawText, leftOver){
     return result; 
 }
 
-function parseTime(timeStr){
+function parseTime(timeStr, selectedDate){
     timeStr = timeStr.trim();
     
     var currentTimeStamp = new Date();
@@ -328,6 +328,10 @@ function parseTime(timeStr){
         console.log('currentTimeStamp modified: ' + currentTimeStamp)
     }
     resultTime = new Date(resultTime);
+    resultTime.setFullYear(selectedDate.getFullYear());
+    resultTime.setMonth(selectedDate.getMonth());
+    resultTime.setDate(selectedDate.getDate());
+   
     return resultTime;
 }
 
