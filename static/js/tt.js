@@ -132,6 +132,16 @@ var app = new Vue({
             this.items.splice(index, 1 , item);
         },
 
+        changeStatus: function(item, newStatus){
+            var rawText = item.rawText;
+            rawText = rawText.replace(/\$\d/, "$" + newStatus);
+
+            item = parseRawTextToItem(rawText);
+
+            var index = this.items.indexOf(item);
+            this.items.splice(index, 1 , item);
+        },
+
         removeItem: function(item){
             this.items.$remove(item);
         },

@@ -100,13 +100,13 @@
                             <td class="view">{{item.persons}}</td>
                             <td class="view">
                                 <span v-bind:class="{selected: 1 == item.status}">
-                                    <i class="fa fa-circle smile" aria-hidden="true"></i>
+                                    <i class="fa fa-circle smile" aria-hidden="true" @click="changeStatus(item, 1)"></i>
                                 </span>
                                 <span v-bind:class="{selected: 2 == item.status || item.status === null}" >
-                                    <i class="fa fa-circle meh" aria-hidden="true"></i>
+                                    <i class="fa fa-circle meh" aria-hidden="true" @click="changeStatus(item, 2)"></i>
                                 </span>
                                 <span v-bind:class="{selected: 3 == item.status}">
-                                    <i class="fa fa-circle frown"  aria-hidden="true"></i>
+                                    <i class="fa fa-circle frown"  aria-hidden="true" @click="changeStatus(item, 3)"></i>
                                 </span>
                                 
                             </td>
