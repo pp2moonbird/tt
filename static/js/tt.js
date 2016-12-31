@@ -101,6 +101,7 @@ var app = new Vue({
         },
 
         doneEdit: function(item){
+            var index = this.items.indexOf(item);
             if(!this.editedItem){
                 return;
             }
@@ -110,7 +111,7 @@ var app = new Vue({
             // console.log(result);
 
             
-            var index = this.items.indexOf(item);
+            
             
             item = result; //value not passed, why
             this.items.splice(index, 1 , item);
@@ -119,6 +120,8 @@ var app = new Vue({
         },
 
         completeItem: function(item){
+            var index = this.items.indexOf(item);
+
             var endTime = new Date();
             var endTimeRawText = formatTimeToRawTextFormat(endTime);
 
@@ -128,17 +131,19 @@ var app = new Vue({
  
             item = parseRawTextToItem(rawText, this.items, this.selectedDate);
 
-            var index = this.items.indexOf(item);
+            
             this.items.splice(index, 1 , item);
         },
 
         changeStatus: function(item, newStatus){
+            var index = this.items.indexOf(item);
+
             var rawText = item.rawText;
             rawText = rawText.replace(/\$\d/, "$" + newStatus);
 
             item = parseRawTextToItem(rawText, this.items, this.selectedDate);
 
-            var index = this.items.indexOf(item);
+            
             this.items.splice(index, 1 , item);
         },
 
