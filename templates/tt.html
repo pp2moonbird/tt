@@ -98,7 +98,18 @@
                             
                             <td class="view">{{item.tags}}</td>
                             <td class="view">{{item.persons}}</td>
-                            <td class="view">{{item.status}}</td>
+                            <td class="view">
+                                <span v-bind:class="{selected: 1 == item.status}">
+                                    <i class="fa fa-circle smile" aria-hidden="true"></i>
+                                </span>
+                                <span v-bind:class="{selected: 2 == item.status || item.status === null}" >
+                                    <i class="fa fa-circle meh" aria-hidden="true"></i>
+                                </span>
+                                <span v-bind:class="{selected: 3 == item.status}">
+                                    <i class="fa fa-circle frown"  aria-hidden="true"></i>
+                                </span>
+                                
+                            </td>
                             <td>
                                 <button class="btn btn-default" type="submit" @click="removeItem(item)">
                                     <i class="fa fa-times" aria-hidden="true" ></i>

@@ -23,3 +23,64 @@ tr.editing td.edit{
 .force-parent-lh {
   line-height: inherit !important;
 }
+
+.selected .smile{
+    color: #3ADF00;
+    opacity: 1;
+}
+
+.selected .meh {
+    color: #A4A4A4;
+    opacity: 1;
+}
+
+.selected .frown{
+    color: #FFFF00;
+    opacity: 1;
+}
+
+.selected .smile:hover{
+    color: #3ADF00;
+    opacity: 1;
+}
+
+.selected .meh:hover {
+    color: #A4A4A4;
+    opacity: 1;
+}
+
+.selected .frown:hover{
+    color: #FFFF00;
+    opacity: 1;
+}
+
+
+.smile{
+    color: #3ADF00;
+    opacity: 0.1;
+}
+
+.meh {
+    color: #A4A4A4;
+    opacity: 0.1;
+}
+
+.frown {
+    color: #FFFF00;
+    opacity: 0.1;
+}
+
+.smile:hover{
+    color: #3ADF00;
+    opacity: 0.5;
+}
+
+.meh:hover {
+    color: #A4A4A4;
+    opacity: 0.5;
+}
+
+.frown:hover {
+    color: #FFFF00;
+    opacity: 0.5;
+}
