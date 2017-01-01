@@ -1,6 +1,6 @@
 var pattern1 = /(\d{3,4}|now)\s*(am|pm)*\s*-\s*(\d{3,4}|now)\s*(am|pm)*/
-var pattern2 = /-\s*(\d{3,4}|now)/
-var pattern3 = /(\d{3,4}|now)\s*-/
+var pattern2 = /-\s*(\d{3,4}|now)\s*(am|pm)*/
+var pattern3 = /(\d{3,4}|now)\s*(am|pm)*\s*-/
 var tagPattern = /#(\w+),*/g
 var personPattern = /@(\w+),*/g
 var statusPattern = /\$(\d)/
@@ -299,7 +299,8 @@ function parsePattern2(rawText, leftOver, items, selectedDate){
     }
     
     var endStr = matchPattern[1].trim();
-    var endTime = parseTime(endStr, selectedDate);
+    var endAMPM = (matchPattern[2]===undefined)?null:matchPattern[2].trim();
+    var endTime = parseTime2(endStr, endAMPM, selectedDate);
 
     rawText = formatTimeToRawTextFormat(startTime) + '-' + formatTimeToRawTextFormat(endTime) + ' ' + rawText.replace(pattern2, '').trim();
     leftOver = leftOver.replace(pattern2, '').trim();
@@ -311,7 +312,8 @@ function parsePattern3(rawText, leftOver, selectedDate){
     var result = null;
     var matchPattern = pattern3.exec(rawText);
     var startTimeStr = matchPattern[1]
-    var startTime = parseTime(startTimeStr, selectedDate);
+    var startAMPM = (matchPattern[2]===undefined)?null:matchPattern[2].trim();
+    var startTime = parseTime2(startTimeStr, startAMPM, selectedDate);
 
     rawText = formatTimeToRawTextFormat(startTime) + '-' + formatTimeToRawTextFormat(null) + ' ' + rawText.replace(pattern3, '').trim();
     leftOver = leftOver.replace(pattern3, '').trim();
