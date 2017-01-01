@@ -1,4 +1,4 @@
-var pattern1 = /(\d{3,4}|now)\s*-\s*(\d{3,4}|now)/
+var pattern1 = /(\d{3,4}|now)\s*(am|pm)*\s*-\s*(\d{3,4}|now)\s*(am|pm)*/
 var pattern2 = /-\s*(\d{3,4}|now)/
 var pattern3 = /(\d{3,4}|now)\s*-/
 var tagPattern = /#(\w+),*/g
@@ -232,14 +232,42 @@ function extractDuration(rawText, leftOver, items, selectedDate){
 }
 
 function parsePattern1(rawText, leftOver, selectedDate){
-    var result = null;
+    var currentTime = new Date();
+    var currentHour = currentTime.getHours();
 
-    var matchPattern = pattern1.exec(rawText);
-    var startStr = matchPattern[1].trim()
-    var endStr = matchPattern[2].trim()
+    var m = pattern1.exec(rawText);
+    var startStr = m[1].trim();
+    var startAMPM = (m[2]===undefined)?null:m[2].trim();
+    var endStr = m[3].trim();
+    var endAMPM = (m[4]===undefined)?null:m[4].trim();
 
-    var startTime = parseTime(startStr, selectedDate);
-    var endTime = parseTime(endStr, selectedDate);
+    var startTime = null;
+    var endTime = null;
+
+    if(currentHour<12){
+        // startTime first
+        startTime = parseTime2(startStr, startAMPM, selectedDate);
+
+        if(startTime.getHours()>=12){
+            endTime = parseTime2(endTime, 'pm', selectedDate);
+        }
+        // depends on startTime pm or not, endTime
+        else{
+            endTime = parseTime2(endTime, endAMPM, selectedDate);
+        }
+    }
+    else{
+        // endTime first
+        endTime = parseTime2(endStr, endAMPM, selectedDate);
+
+        // depends on endTime am or not, startTime
+        if(endTime.getHours()<12){
+            startTime = parseTime2(startStr, 'am', selectedDate);
+        }
+        else{
+            startTime = parseTime2(startStr,startAMPM, selectedDate);
+        }
+    }
 
     rawText = formatTimeToRawTextFormat(startTime) + '-' + formatTimeToRawTextFormat(endTime) + ' ' + rawText.replace(pattern1, '').trim();
     leftOver = leftOver.replace(pattern1, '').trim();
@@ -339,6 +367,69 @@ function parseTime(timeStr, selectedDate){
    
     return resultTime;
 }
+
+function parseTime2(timeStr, ampmFlag, selectedDate){
+    timeStr = timeStr.trim();
+
+    var currentTimeStamp = new Date();
+    var resultTime = null;
+    var h=null;
+    var m=null;
+
+    if(timeStr.toLowerCase()=='now'){
+        resultTime = currentTimeStamp;
+    }
+    else{
+        if (timeStr.length == 3){
+            h = timeStr[0]
+            m = timeStr[1] + timeStr[2]
+        }
+        else{
+            h = timeStr[0] + timeStr[1]
+            m = timeStr[2] + timeStr[3]
+        }        
+        var hour = Number(h);
+        var minute = Number(m);
+
+        //error handling TODO, what if hour or minute is not in valid range
+        
+        // explicitly pm if hour > 12
+        if(hour>=12){
+            resultTime = currentTimeStamp.setHours(hour);
+            resultTime = currentTimeStamp.setMinutes(minute);
+        }
+        // if hour < 12
+        else{
+            // check ampmFlag
+            if(ampmFlag == 'am'){
+                resultTime = currentTimeStamp.setHours(hour);
+                resultTime = currentTimeStamp.setMinutes(minute);
+            }
+            else if (ampmFlag == 'pm'){
+                resultTime = currentTimeStamp.setHours(hour + 12);
+                resultTime = currentTimeStamp.setMinutes(minute);
+            }
+            // check currentTimeStamp & convert to pm if needed
+            else{
+                if(currentTimeStamp.getHours()>=12){
+                    resultTime = currentTimeStamp.setHours(hour + 12);
+                    resultTime = currentTimeStamp.setMinutes(minute);
+                }
+                else{
+                    resultTime = currentTimeStamp.setHours(hour);
+                    resultTime = currentTimeStamp.setMinutes(minute);
+                }
+            }
+        }
+    }
+    resultTime = new Date(resultTime);
+    resultTime.setFullYear(selectedDate.getFullYear());
+    resultTime.setMonth(selectedDate.getMonth());
+    resultTime.setDate(selectedDate.getDate());
+
+    return resultTime;
+}
+
 
 function duration(startTime, endTime, isValid, leftOver, rawText){
     this.startTime = startTime;
@@ -442,6 +533,9 @@ function formatTimeToRawTextFormat(time){
         var hour = time.getHours();
         var minute = time.getMinutes();
         var result = hour + ((minute < 10) ? "0" : "") + minute;
+        if (hour<12){
+            result = result + ' am'
+        }
         return result;
     }
     else return '';
