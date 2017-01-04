@@ -249,11 +249,11 @@ function parsePattern1(rawText, leftOver, selectedDate){
         startTime = parseTime2(startStr, startAMPM, selectedDate);
 
         if(startTime.getHours()>=12){
-            endTime = parseTime2(endTime, 'pm', selectedDate);
+            endTime = parseTime2(endStr, 'pm', selectedDate);
         }
         // depends on startTime pm or not, endTime
         else{
-            endTime = parseTime2(endTime, endAMPM, selectedDate);
+            endTime = parseTime2(endStr, endAMPM, selectedDate);
         }
     }
     else{
@@ -371,7 +371,7 @@ function parseTime(timeStr, selectedDate){
 }
 
 function parseTime2(timeStr, ampmFlag, selectedDate){
-    timeStr = timeStr.trim();
+    //timeStr = timeStr.trim();
 
     var currentTimeStamp = new Date();
     var resultTime = null;
