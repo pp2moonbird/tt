@@ -70,6 +70,7 @@
                             <th class="col-md-4">Item Text</th>
                             <th class="col-md-2">Start Time</th>
                             <th class="col-md-2">End Time</th>
+                            <th class="col-md-1">Duration</th>
                             <th class="col-md-1">Tags</th>
                             <th class="col-md-1">Persons</th>
                             <th class="col-md-1">Status</th>
@@ -89,11 +90,13 @@
                             <td class="view">{{item.startTimeStr}}</td>
                             <template v-if="item.completed">
                                 <td class="view">{{item.endTimeStr}}</td>
+                                <td class="view" align="right">{{Math.round((Date.parse(item.endTime) - Date.parse(item.startTime))/1000/60)}}</td>
                             </template>
                             <template v-else>
                                 <td class="view">
                                     <button class="btn btn-default" type="submit" @click="completeItem(item)">Done</button>
                                 </td>
+                                <td></td>
                             </template>
                             
                             <td class="view">{{item.tags}}</td>
